@@ -1,0 +1,15 @@
+.container {
+    padding: 1.5em;
+}
+
+button {
+    margin: 5px;
+}
+
+p {
+    margin: 5px;
+}
+
+.list-group {
+    max-width: 400px;
+}
