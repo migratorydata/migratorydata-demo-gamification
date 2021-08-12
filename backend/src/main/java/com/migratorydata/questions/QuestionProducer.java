@@ -41,9 +41,7 @@ public class QuestionProducer {
 
                 Question question = questions.get(questionNumber.getAndIncrement());
 
-                int seekSeconds = questionNumber.get() * 5;
-
-                ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicQuestion, null, question.toJson(seekSeconds).getBytes());
+                ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicQuestion,0, null, question.toJson().getBytes());
 
                 producer.send(record, new Callback() {
                     @Override

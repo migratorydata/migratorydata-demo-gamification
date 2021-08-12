@@ -45,6 +45,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (subject == QUESTIONS_SUBJECT) {
             var questionObject = JSON.parse(message.content);
 
+            if (questionObject.seek == 0) {
+                if (player) {
+                    player.seekTo(0, true);
+                }
+            }
+
             showQuestion(questionObject);
 
             stopQuestionTimeoutTimer();

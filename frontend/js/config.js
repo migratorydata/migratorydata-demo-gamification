@@ -25,6 +25,9 @@ var SUBJECTS = [
 ];
 
 var questionTimer;
+// global variable for the player
+var player;
+var videoSeekSeconds = 0;
 
 var WAITING_TEXT = "Waiting for result.";
 var INCORRECT_TEXT = "The answer was incorrect, wait for the next question!";

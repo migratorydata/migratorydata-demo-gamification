@@ -1,11 +1,20 @@
 #https://www.jetpunk.com/quizzes/multiple-choice-general-knowledge-1
 
+#format:
+#question
+#answer1
+#answer2
+#answerx
+#correctAnswer
+#seekTime
+
 1. What is the longest that an elephant has ever lived? (That we know of)
 17 years
 49 years
 86 years
 142 years
 86 years
+0
 
 2. How many rings are on the Olympic flag?
 None
@@ -13,12 +22,14 @@ None
 5
 7
 5
+12
 
 3. What is a tarsier?
 A primate
 A lizard
 A bird
 A primate
+24
 
 4. How did Spider-Man get his powers?
 Military experiment gone awry
@@ -26,6 +37,7 @@ Born with them
 Woke up with them after a strange dream
 Bitten by a radioactive spider
 Bitten by a radioactive spider
+36
 
 5. In darts, what's the most points you can score with a single throw?
 20
@@ -33,6 +45,7 @@ Bitten by a radioactive spider
 60
 100
 60
+48
 
 6. Which of these animals does NOT appear in the Chinese zodiac?
 Bear
@@ -40,12 +53,14 @@ Rabbit
 Dragon
 Dog
 Bear
+60
 
 7. Who are known as Brahmins?
 Surfers in California
 Members of India's highest caste
 It's totally made up word
 Members of India's highest caste
+72
 
 8. How many holes are on a standard bowling ball?
 2
@@ -53,11 +68,13 @@ Members of India's highest caste
 5
 10
 3
+84
 
 9. Would a Catholic living in the United States ever celebrate Easter in May?
 Yes
 No
 No
+96
 
 10. What are the main colors on the flag of Spain?
 Black and yellow
@@ -65,6 +82,7 @@ Green and white
 Blue and white
 Red and yellow
 Red and yellow
+108
 
 11. What is the name of this symbol: ¶
 Fermata
@@ -72,6 +90,7 @@ Pilcrow
 Interrobang
 Biltong
 Pilcrow
+120
 
 12. In the nursery rhyme, how many blackbirds were baked in a pie?
 4
@@ -79,12 +98,14 @@ Pilcrow
 24
 99
 24
+132
 
 13. What is a pomelo?
 An old-fashioned punching bag
 A breed of dog
 The largest citrus fruit
 The largest citrus fruit
+144
 
 14. Who killed Greedo?
 Hannibal Lecter
@@ -92,14 +113,17 @@ Han Solo
 Hermione Granger
 Hercules
 Han Solo
+156
 
 15. Are giant pandas a type of bear?
 Yes
 No
 Yes
+168
 
 16. How many points is the letter X worth in English-language Scrabble?
 None
 8
 11
 8
+0

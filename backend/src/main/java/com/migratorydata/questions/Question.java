@@ -11,14 +11,16 @@ public class Question {
     String question;
     List<String> answers;
     String correctAnswer;
+    int seekSeconds;
 
-    public Question(String question, List<String> answers, String correctAnswer) {
+    public Question(String question, List<String> answers, String correctAnswer, int seekSeconds) {
         this.question = question;
         this.answers = answers;
         this.correctAnswer = correctAnswer;
+        this.seekSeconds = seekSeconds;
     }
 
-    public String toJson(int seekSeconds) {
+    public String toJson() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", UUID.randomUUID().toString().substring(0, 5));
         jsonObject.put("question", question);
@@ -44,6 +46,7 @@ public class Question {
                 "question='" + question + '\'' +
                 ", answers=" + answers +
                 ", correctAnswer='" + correctAnswer + '\'' +
+                ", seekSeconds=" + seekSeconds +
                 '}';
     }
 }

@@ -18,7 +18,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <ul class="nav nav-tabs" id="mainTab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="game-tab" data-bs-toggle="tab" data-bs-target="#game"
@@ -33,25 +33,25 @@
         </div>
         <div class="tab-content" id="mainTabContent">
             <div class="tab-pane fade show active" id="game" role="tabpanel" aria-labelledby="game-tab">
-                <div class="row">
-                    <div class="col">
-                        <iframe id="video" width="560" height="315" src="https://www.youtube.com/embed/wwM4CAQXGsM?enablejsapi=1&html5=1" frameborder="0" allowfullscreen></iframe>
+                <div class="row mt-2">
+                    <div class="col-md-6 text-center">
+                        <iframe id="video" width="560" height="315" src="https://www.youtube.com/embed/wwM4CAQXGsM?enablejsapi=1&html5=1&mute=1" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
                 <div class="row mt-1">
-                    <div class="col-md-4 text-center">
+                    <div class="col-md-6 text-center">
                         <p id="show-question"> Waiting for questions...</p>
                         <p id="show-result"></p>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-4 text-center">
+                    <div class="col-md-6 text-center">
                         <div class="d-grid gap-2" id="show-answers">
                         </div>
                     </div>
                 </div>
                 <div class="row mt-2">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="progress">
                             <div id="questionTimeout" class="progress-bar bg-info" role="progressbar" aria-valuenow="0"
                                 aria-valuemin="0" aria-valuemax="100"></div>
@@ -61,7 +61,7 @@
             </div>
             <div class="tab-pane fade" id="top" role="tabpanel" aria-labelledby="top-tab">
                 <div class="row">
-                    <div class="col-md-4" id="update-top-tab">
+                    <div class="col-md-6" id="update-top-tab">
                         <p id="total-score">Fetching top players...</p>
                         <ol id="top-scores" class="list-group list-group-numbered list-group-flush"></ol>
                     </div>
@@ -70,36 +70,6 @@
         </div>
     </div>
 
-    <script>
-// global variable for the player
-var player;
-
-var videoSeekSeconds = 0;
-
-// this function gets called when API is ready to use
-function onYouTubePlayerAPIReady() {
-    // create the global player from the specific iframe (#video)
-    player = new YT.Player('video', {
-        events: {
-            // call this function when player is ready to use
-            'onReady': onPlayerReady
-        }
-    });
-}
-
-function onPlayerReady(event) {
-    player.seekTo(videoSeekSeconds);
-    player.playVideo();
-}
-
-// Inject YouTube API script
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/player_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-</script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
@@ -107,6 +77,14 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     <script src='js/util.js'></script>
     <script src='js/config.js'></script>
     <script src='js/main.js'></script>
+
+    <script>
+        // Inject YouTube API script
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/player_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    </script>
 </body>
 
 </html>

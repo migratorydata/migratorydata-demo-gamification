@@ -109,3 +109,19 @@ function generateRandomId(length) {
     }
     return result;
 }
+
+// this function gets called when API is ready to use
+function onYouTubePlayerAPIReady() {
+    // create the global player from the specific iframe (#video)
+    player = new YT.Player('video', {
+        events: {
+            // call this function when player is ready to use
+            'onReady': onPlayerReady
+        }
+    });
+}
+
+function onPlayerReady(event) {
+    player.seekTo(videoSeekSeconds);
+    player.playVideo();
+}

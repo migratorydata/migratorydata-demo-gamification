@@ -23,8 +23,9 @@ public class QuestionLoader {
                 }
                 if (line.isEmpty()) {
                     if (question != null && answers.size() > 0) {
+                        Integer seekToSeconds = Integer.valueOf(answers.remove(answers.size() - 1));
                         String correctAnswer = answers.remove(answers.size() - 1);
-                        questions.add(new Question(question, answers, correctAnswer));
+                        questions.add(new Question(question, answers, correctAnswer, seekToSeconds));
                     }
                     question = null;
                     answers = new ArrayList<>();
