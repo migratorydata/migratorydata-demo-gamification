@@ -19,24 +19,18 @@ public class LeaderboardProcessor {
     private final Map<String, Integer> playersScore = new HashMap<>();
 
     private final String topicTop;
+    private final String topicResult;
 
     private final KafkaProducer<String, byte[]> producer;
 
-    public LeaderboardProcessor(Properties props, int nrOfQuestions) {
+    public LeaderboardProcessor(Properties props) {
         topicTop = props.getProperty("topic.top");
+        topicResult = props.getProperty("topic.result");
 
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
 
         producer =  new KafkaProducer<>(props);
-
-        executor.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                leaderBoard.clear();
-                playersScore.clear();
-            }
-        }, 5000 + nrOfQuestions * Integer.valueOf(props.getProperty("question.interval", "20000")), nrOfQuestions * Integer.valueOf(props.getProperty("question.interval", "20000")), TimeUnit.MILLISECONDS);
     }
 
     public void stop() {
@@ -94,6 +88,19 @@ public class LeaderboardProcessor {
         executor.execute(() -> {
             ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicTop, playerId, encodeResponse(playerId).getBytes());
             producer.send(record);
+        });
+    }
+
+    public void handleReset() {
+        executor.execute(() -> {
+            JSONObject reset = new JSONObject();
+            reset.put("reset", true);
+            for (String player : playersScore.keySet()) {
+                ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicResult, player, reset.toString().getBytes());
+                producer.send(record);
+            }
+            leaderBoard.clear();
+            playersScore.clear();
         });
     }
 }

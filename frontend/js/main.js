@@ -28,10 +28,12 @@ document.addEventListener('DOMContentLoaded', function() {
     MigratoryDataClient.setMessageHandler(function (message) {
         console.log(message);
 
-        if (message.subject == QUESTIONS_SUBJECT && message.type == MigratoryDataClient.MESSAGE_TYPE_SNAPSHOT) {
-            var questionObject = JSON.parse(message.content);
-            videoSeekSeconds = questionObject.seek;
+        if (message.subject == LIVE_TIME_SUBJECT) {
+            var seekObject = JSON.parse(message.content);
+            videoSeekSeconds = seekObject.seek;
             console.log(videoSeekSeconds);
+
+            MigratoryDataClient.unsubscribe([LIVE_TIME_SUBJECT]);
             return;
         }
 
@@ -45,12 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (subject == QUESTIONS_SUBJECT) {
             var questionObject = JSON.parse(message.content);
 
-            if (questionObject.seek == 0) {
-                if (player) {
-                    player.seekTo(0, true);
-                }
-            }
-
             showQuestion(questionObject);
 
             stopQuestionTimeoutTimer();
@@ -60,17 +56,24 @@ document.addEventListener('DOMContentLoaded', function() {
         // show the result 
         if (subject == RESULTS_SUBJECT) {
             var result = JSON.parse(message.content);
-            if (parseInt(result.points) > 0) {
-                showInfoAboutResult("You won " + result.points + " points, wait for the next question!");
-            } else {
-                showInfoAboutResult(INCORRECT_TEXT);
-            }
-            document.querySelectorAll('button[questionId]').forEach(el => {
-                if (el.textContent == result.answer) {
-                    el.classList.remove("btn-danger");
-                    el.classList.add("btn-success");
+
+            if (result.reset) {
+                if (player) {
+                    player.seekTo(0, true);
                 }
-            });        
+            } else {
+                if (parseInt(result.points) > 0) {
+                    showInfoAboutResult("You won " + result.points + " points, wait for the next question!");
+                } else {
+                    showInfoAboutResult(INCORRECT_TEXT);
+                }
+                document.querySelectorAll('button[questionId]').forEach(el => {
+                    if (el.textContent == result.answer) {
+                        el.classList.remove("btn-danger");
+                        el.classList.add("btn-success");
+                    }
+                });
+            }
         }
 
         // display the top users

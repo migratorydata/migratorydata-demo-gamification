@@ -53,17 +53,18 @@ public class Main {
         }
 
         List<Question> questions = QuestionLoader.loadQuestion();
-        if (enableQuestionProducer) {
-            questionProducer = new QuestionProducer(questions, config);
-            questionProducer.start();
-        }
 
         // Leaderboard processor start
         if (enableLeaderboard) {
-            leaderboardProcessor = new LeaderboardProcessor(config, questions.size());
+            leaderboardProcessor = new LeaderboardProcessor(config);
 
             scoreConsumer = new ScoreConsumer(leaderboardProcessor, config);
             scoreConsumer.start();
+        }
+
+        if (enableQuestionProducer) {
+            questionProducer = new QuestionProducer(questions, config, leaderboardProcessor);
+            questionProducer.start();
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
