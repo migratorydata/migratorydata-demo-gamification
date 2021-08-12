@@ -1,5 +1,6 @@
 package com.migratorydata.leaderboard;
 
+import com.migratorydata.questions.Question;
 import org.apache.kafka.clients.producer.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -7,10 +8,12 @@ import org.json.JSONObject;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class LeaderboardProcessor {
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     private final TreeSet<PlayerScore> leaderBoard = new TreeSet<>();
     private final Map<String, Integer> playersScore = new HashMap<>();
@@ -19,13 +22,21 @@ public class LeaderboardProcessor {
 
     private final KafkaProducer<String, byte[]> producer;
 
-    public LeaderboardProcessor(Properties props) {
+    public LeaderboardProcessor(Properties props, int nrOfQuestions) {
         topicTop = props.getProperty("topic.top");
 
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
 
         producer =  new KafkaProducer<>(props);
+
+        executor.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                leaderBoard.clear();
+                playersScore.clear();
+            }
+        }, 5000 + nrOfQuestions * Integer.valueOf(props.getProperty("question.interval", "20000")), nrOfQuestions * Integer.valueOf(props.getProperty("question.interval", "20000")), TimeUnit.MILLISECONDS);
     }
 
     public void stop() {

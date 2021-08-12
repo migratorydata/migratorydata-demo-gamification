@@ -20,7 +20,7 @@ public class ScoreConsumer implements Runnable {
     private final KafkaConsumer<String, byte[]> consumer;
 
     private final Thread thread;
-    private final String topicTop;
+    private final String topicGettop;
 
     public ScoreConsumer(LeaderboardProcessor leaderboardProcessor, Properties props) {
         this.leaderboardProcessor = leaderboardProcessor;
@@ -35,9 +35,9 @@ public class ScoreConsumer implements Runnable {
         this.consumer = new KafkaConsumer<>(config);
 
         String topicResult = props.getProperty("topic.result");
-        topicTop = props.getProperty("topic.top");
+        topicGettop = props.getProperty("topic.gettop");
 
-        consumer.subscribe(Arrays.asList(topicResult, topicTop));
+        consumer.subscribe(Arrays.asList(topicResult, topicGettop));
 
         this.thread = new Thread(this);
         this.thread.setName("ScoreConsumer-" + thread.getId());
@@ -64,10 +64,8 @@ public class ScoreConsumer implements Runnable {
 
                     JSONObject data = new JSONObject(new String(record.value()));
 
-                    if (record.topic().equals(topicTop)) {
-                        try {
-                            leaderboardProcessor.handleTopRequest(data.getString("user_id"));
-                        } catch (JSONException e) { }
+                    if (record.topic().equals(topicGettop)) {
+                        leaderboardProcessor.handleTopRequest(data.getString("user_id"));
                     } else {
                         leaderboardProcessor.updateScore(record.key(), data.getInt("points"));
                     }

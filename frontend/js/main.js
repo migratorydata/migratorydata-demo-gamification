@@ -28,6 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
     MigratoryDataClient.setMessageHandler(function (message) {
         console.log(message);
 
+        if (message.subject == QUESTIONS_SUBJECT && message.type == MigratoryDataClient.MESSAGE_TYPE_SNAPSHOT) {
+            var questionObject = JSON.parse(message.content);
+            videoSeekSeconds = questionObject.seek;
+            console.log(videoSeekSeconds);
+            return;
+        }
+
         if (message.type != MigratoryDataClient.MESSAGE_TYPE_UPDATE) {
             return;
         }

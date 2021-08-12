@@ -18,7 +18,7 @@ public class Question {
         this.correctAnswer = correctAnswer;
     }
 
-    public String toJson() {
+    public String toJson(int seekSeconds) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", UUID.randomUUID().toString().substring(0, 5));
         jsonObject.put("question", question);
@@ -32,6 +32,8 @@ public class Question {
         jsonObject.put("answer", correctAnswer);
 
         jsonObject.put("points", 100);
+
+        jsonObject.put("seek", seekSeconds);
 
         return jsonObject.toString();
     }

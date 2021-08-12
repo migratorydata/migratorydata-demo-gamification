@@ -4,12 +4,14 @@ import com.migratorydata.answers.AnswersConsumer;
 import com.migratorydata.answers.ResultsProducer;
 import com.migratorydata.answers.StatisticsProcessor;
 import com.migratorydata.questions.PlayersSimulator;
+import com.migratorydata.questions.Question;
 import com.migratorydata.questions.QuestionLoader;
 import com.migratorydata.questions.QuestionProducer;
 import com.migratorydata.leaderboard.ScoreConsumer;
 import com.migratorydata.leaderboard.LeaderboardProcessor;
 
 import java.io.*;
+import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -50,14 +52,15 @@ public class Main {
             playersSimulator.start();
         }
 
+        List<Question> questions = QuestionLoader.loadQuestion();
         if (enableQuestionProducer) {
-            questionProducer = new QuestionProducer(QuestionLoader.loadQuestion(), config);
+            questionProducer = new QuestionProducer(questions, config);
             questionProducer.start();
         }
 
         // Leaderboard processor start
         if (enableLeaderboard) {
-            leaderboardProcessor = new LeaderboardProcessor(config);
+            leaderboardProcessor = new LeaderboardProcessor(config, questions.size());
 
             scoreConsumer = new ScoreConsumer(leaderboardProcessor, config);
             scoreConsumer.start();
