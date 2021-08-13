@@ -22,11 +22,11 @@
                 <ul class="nav nav-tabs" id="mainTab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="game-tab" data-bs-toggle="tab" data-bs-target="#game"
-                            type="button" role="tab" aria-controls="nav-game" aria-selected="true">Game</button>
+                            type="button" role="tab" aria-controls="nav-game" aria-selected="true">Play</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="top-tab" data-bs-toggle="tab" data-bs-target="#top" type="button"
-                            role="tab" aria-controls="nav-top" aria-selected="true">Top</button>
+                            role="tab" aria-controls="nav-top" aria-selected="true">Leaderboard</button>
                     </li>
                 </ul>
             </div>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="row mt-1">
                     <div class="col-md-6 text-center">
-                        <p id="show-question"> Waiting for questions...</p>
+                        <h5 id="show-question"> Waiting for questions...</h5>
                         <p id="show-result"></p>
                     </div>
                 </div>
@@ -61,9 +61,9 @@
                 </div>
             </div>
             <div class="tab-pane fade" id="top" role="tabpanel" aria-labelledby="top-tab">
-                <div class="row">
+                <div class="row mt-2">
                     <div class="col-md-6" id="update-top-tab">
-                        <p id="total-score">Fetching top players...</p>
+                        <h5 id="total-score">Fetching top players...</h5>
                         <ol id="top-scores" class="list-group list-group-numbered list-group-flush"></ol>
                     </div>
                 </div>

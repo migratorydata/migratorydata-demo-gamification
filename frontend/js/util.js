@@ -62,7 +62,7 @@ function showQuestion(question) {
     var questionText = question.question;
     var questionPoints = question.points;
 
-    document.querySelector('#show-question').textContent = questionText + " ( win " + questionPoints + " points)"; 
+    document.querySelector('#show-question').textContent = questionText + " (" + questionPoints + " points)"; 
     document.querySelector('#show-result').textContent = "";
 
 
