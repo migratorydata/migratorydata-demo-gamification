@@ -122,6 +122,6 @@ function onYouTubePlayerAPIReady() {
 }
 
 function onPlayerReady(event) {
-    player.seekTo(videoSeekSeconds);
+    player.seekTo(videoSeekSeconds, true);
     player.playVideo();
 }

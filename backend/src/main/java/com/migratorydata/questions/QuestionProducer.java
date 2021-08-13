@@ -48,9 +48,7 @@ public class QuestionProducer {
                 if (qNumber + 1 >= questions.size()) {
                     try {
                         Thread.sleep(30000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (InterruptedException e) { }
                     questionNumber.getAndSet(0);
                     seekTimeSeconds.getAndSet(0);
                     if (leaderboardProcessor != null)
@@ -66,14 +64,7 @@ public class QuestionProducer {
                 seekTime.put("seek", seekTimeSeconds.getAndIncrement());
                 ProducerRecord<String, byte[]> record = new ProducerRecord<>("live",0, "time", seekTime.toString().getBytes());
 
-                producer.send(record, new Callback() {
-                    @Override
-                    public void onCompletion(RecordMetadata metadata, Exception exception) {
-                        if (exception == null) {
-                            System.out.println("Published seek time: " + seekTime.toString());
-                        }
-                    }
-                });
+                producer.send(record);
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }

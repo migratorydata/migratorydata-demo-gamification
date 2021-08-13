@@ -1,15 +1,12 @@
 package com.migratorydata.leaderboard;
 
-import com.migratorydata.questions.Question;
 import org.apache.kafka.clients.producer.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class LeaderboardProcessor {
 
@@ -40,7 +37,7 @@ public class LeaderboardProcessor {
     public String encodeResponse(String playerName) {
         JSONObject response = new JSONObject();
         response.put("score", score(playerName));
-        response.put("top", top10());
+        response.put("top", getTop());
         return response.toString();
     }
 
@@ -53,12 +50,12 @@ public class LeaderboardProcessor {
         }
     }
 
-    public JSONArray top10() {
+    public JSONArray getTop() {
         JSONArray jsonTopArray = new JSONArray();
 
-        int topTen = 10;
+        int topNumber = 15;
         Iterator<PlayerScore> it = leaderBoard.descendingIterator();
-        while (it.hasNext() && topTen-- > 0) {
+        while (it.hasNext() && topNumber-- > 0) {
             PlayerScore player = it.next();
             JSONObject playerScore = new JSONObject();
             playerScore.put("name", player.getName());
@@ -95,6 +92,7 @@ public class LeaderboardProcessor {
         executor.execute(() -> {
             JSONObject reset = new JSONObject();
             reset.put("reset", true);
+            reset.put("message", "Game ended. A new game will start now. Wait for the questions.");
             for (String player : playersScore.keySet()) {
                 ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicResult, player, reset.toString().getBytes());
                 producer.send(record);

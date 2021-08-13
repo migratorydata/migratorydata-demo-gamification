@@ -28,12 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
     MigratoryDataClient.setMessageHandler(function (message) {
         console.log(message);
 
-        if (message.subject == LIVE_TIME_SUBJECT) {
+        if (message.subject == LIVE_VIDEO_TIME_SUBJECT) {
             var seekObject = JSON.parse(message.content);
             videoSeekSeconds = seekObject.seek;
-            console.log(videoSeekSeconds);
 
-            MigratoryDataClient.unsubscribe([LIVE_TIME_SUBJECT]);
+            MigratoryDataClient.unsubscribe([LIVE_VIDEO_TIME_SUBJECT]);
             return;
         }
 
@@ -61,6 +60,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (player) {
                     player.seekTo(0, true);
                 }
+                document.querySelector('#show-question').textContent = "";
+                document.querySelector('#show-result').textContent = result.message;
+                var divEl = document.querySelector('#show-answers');
+                divEl.innerHTML = "";            
             } else {
                 if (parseInt(result.points) > 0) {
                     showInfoAboutResult("You won " + result.points + " points, wait for the next question!");

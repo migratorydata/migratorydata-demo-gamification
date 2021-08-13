@@ -67,7 +67,9 @@ public class ScoreConsumer implements Runnable {
                     if (record.topic().equals(topicGettop)) {
                         leaderboardProcessor.handleTopRequest(data.getString("user_id"));
                     } else {
-                        leaderboardProcessor.updateScore(record.key(), data.getInt("points"));
+                        try {
+                            leaderboardProcessor.updateScore(record.key(), data.getInt("points"));
+                        } catch (JSONException e) {}
                     }
                 }
             }
