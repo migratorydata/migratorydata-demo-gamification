@@ -14,14 +14,14 @@ function sendAnswer(answer, questionId) {
 };
 
 function createAnswerButton(answer, questionId) {
-    var buttonElement = document.createElement("button");
-    buttonElement.setAttribute("type", "button");
-    buttonElement.setAttribute("class", "btn btn-primary btn-lg");
+    var buttonElement = document.createElement("a");
+    buttonElement.setAttribute("class", "button btn btn-primary btn-lg");
+    buttonElement.setAttribute('style', 'cursor:pointer');
     buttonElement.setAttribute("questionId", questionId);
     buttonElement.textContent = answer;
     buttonElement.addEventListener('click', function() {
         sendAnswer(this.textContent, this.getAttribute('questionId'));
-        document.querySelectorAll('button[questionId]').forEach(el => {
+        document.querySelectorAll('a[questionId]').forEach(el => {
             el.classList.add("disabled");
         });
         this.classList.add("btn-danger");
@@ -77,7 +77,7 @@ function showQuestion(question) {
 function disableQuestionAnswers() {
     document.querySelector('#show-result').textContent = "Waiting for the next question.";
 
-    document.querySelectorAll('button[questionId]').forEach(el => {
+    document.querySelectorAll('a[questionId]').forEach(el => {
         el.classList.add("disabled");
     });
 }

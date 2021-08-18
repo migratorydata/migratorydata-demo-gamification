@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     // add event to Tabs
-    document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(el => {
-        el.addEventListener('shown.bs.tab', function (event) {
+    document.querySelectorAll('input[type="radio"]').forEach(el => {
+        el.addEventListener('click', function (event) {
+            console.log(event.target.id);
               switch (event.target.id) {
-                case "game-tab": {
+                case "tab1": {
                     break;
                 }
-                case "top-tab": {
+                case "tab2": {
                     // send the request to get the top players
                     MigratoryDataClient.publish({
                         subject: TOP_SERVICE_SUBJECT,
@@ -70,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     showInfoAboutResult(INCORRECT_TEXT);
                 }
-                document.querySelectorAll('button[questionId]').forEach(el => {
+                document.querySelectorAll('a[questionId]').forEach(el => {
                     if (el.textContent == result.answer) {
                         el.classList.remove("btn-danger");
                         el.classList.add("btn-success");
