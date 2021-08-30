@@ -2,12 +2,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // add event to Tabs
     document.querySelectorAll('input[type="radio"]').forEach(el => {
         el.addEventListener('click', function (event) {
-            console.log(event.target.id);
               switch (event.target.id) {
-                case "tab1": {
+                case "tab-play": {
                     break;
                 }
-                case "tab2": {
+                case "tab-leaderboard": {
                     // send the request to get the top players
                     MigratoryDataClient.publish({
                         subject: TOP_SERVICE_SUBJECT,
@@ -32,6 +31,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (message.subject == LIVE_VIDEO_TIME_SUBJECT) {
             var seekObject = JSON.parse(message.content);
             videoSeekSeconds = seekObject.seek;
+
+            if (videoPlayerReady) {
+                player.seekTo(videoSeekSeconds, true);
+                player.playVideo();
+            }
 
             MigratoryDataClient.unsubscribe([LIVE_VIDEO_TIME_SUBJECT]);
             return;
@@ -58,8 +62,9 @@ document.addEventListener('DOMContentLoaded', function() {
             var result = JSON.parse(message.content);
 
             if (result.reset) {
-                if (player) {
+                if (videoPlayerReady) {
                     player.seekTo(0, true);
+                    player.playVideo();
                 }
                 document.querySelector('#show-question').textContent = "";
                 document.querySelector('#show-result').textContent = result.message;

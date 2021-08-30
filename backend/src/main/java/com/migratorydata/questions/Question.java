@@ -11,13 +11,11 @@ public class Question {
     String question;
     List<String> answers;
     String correctAnswer;
-    int seekSeconds;
 
-    public Question(String question, List<String> answers, String correctAnswer, int seekSeconds) {
+    public Question(String question, List<String> answers, String correctAnswer) {
         this.question = question;
         this.answers = answers;
         this.correctAnswer = correctAnswer;
-        this.seekSeconds = seekSeconds;
     }
 
     public String toJson() {
@@ -35,8 +33,6 @@ public class Question {
 
         jsonObject.put("points", 100);
 
-        jsonObject.put("seek", seekSeconds);
-
         return jsonObject.toString();
     }
 
@@ -46,7 +42,6 @@ public class Question {
                 "question='" + question + '\'' +
                 ", answers=" + answers +
                 ", correctAnswer='" + correctAnswer + '\'' +
-                ", seekSeconds=" + seekSeconds +
                 '}';
     }
 }
