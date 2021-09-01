@@ -9,9 +9,9 @@ How to run:
 `topics=question,result,top,live`
    
 **Note:** Because this demo uses a youtube video instead of a live video stream, we use an additional topic `live` to 
-synchronize the feed of live questions with the moment when the player loads the video (when loaded, the youtube video 
+synchronize the feed of the live questions with the moment when the player loads the video (when loaded, the youtube video 
 will seek ahead a number of seconds corresponding to the current live question).
 
-3. Configure and start backend, see backend/README (gradle run)
+3. Configure and start the backend, see backend/README (gradle run)
 
-4. Configure and start frontend, see frontend/README (npm start)
+4. Configure and start the frontend, see frontend/README (npm start)
