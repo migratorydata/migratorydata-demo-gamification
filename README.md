@@ -1,17 +1,17 @@
-The repository contains the demo application for watch and play. 
-
-In the directory `backend` the java application is found. The app simulates players, send trivia question, aggregates answers received from players and responds to players with the results. Also the app creates a leaderboard with top 10 players.
-
-The frontend app for the human player is found in directory `frontend`. When the app is open in browser the MigratoryData Javascript API connects to MigratoryData KE server and waits for questions. The user selects an answer and waits for the result. On tab `Top` the player can see the leaderboard and current score.
+This repository contains a demo application for gamification.The folder `frontend` contains the source code of the UI.The folder `backend` contains the source code of the Leaderboard Processor, Answers Processor, and Questions Generator.
 
 How to run:
 
-1. Start a kafka broker
+1. Install MigratoryData Kafka Edition. See the [Installation Guide](https://migratorydata.com/docs/migratorydata-ke/installation/).
 
-2. Configure and start migratorydata-ke
-
-update topic configuration for consumer in file `migratorydata-ke/kafka/consumer.properties`:
-    topics=question,result,top
+2. Configure MigratoryData Kafka Edition by editing the parmeter `topics` of the configuration file `migratorydata-ke/kafka/consumer.properties` as follows:
+   
+`topics=question,result,top,live`
+   
+**Note:** Because this demo uses a youtube video instead of a live video stream, we use an additional topic `live` to 
+synchronize the feed of live questions with the moment when the player loads the video (when loaded, the youtube video 
+will seek ahead a number of seconds corresponding to the current live question).
 
 3. Configure and start backend, see backend/README (gradle run)
+
 4. Configure and start frontend, see frontend/README (npm start)
