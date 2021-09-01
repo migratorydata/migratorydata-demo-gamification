@@ -1,4 +1,4 @@
-This repository contains a demo application for gamification.The folder `frontend` contains the source code of the UI.The folder `backend` contains the source code of the Leaderboard Processor, Answers Processor, and Questions Generator.
+This repository contains a demo application for gamification as detailed in the article [Building a Realtime Gamification Feature that Scales to Millions of Devices using MigratoryData, Kafka, and WebSockets: A look at Watch’NPlay Interactive Game](#). The folder `frontend` contains the source code of the UI. The folder `backend` contains the source code of the Leaderboard Processor, Answers Processor, and Questions Generator.
 
 How to run:
 
