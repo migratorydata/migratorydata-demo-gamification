@@ -4,7 +4,6 @@
 #answer2
 #answerx
 #correctAnswer
-#seekTime
 
 # 0:20
 How many spectators are there altogether?
