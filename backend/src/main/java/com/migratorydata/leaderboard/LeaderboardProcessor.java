@@ -15,12 +15,14 @@ public class LeaderboardProcessor {
     private final TreeSet<PlayerScore> leaderBoard = new TreeSet<>();
     private final Map<String, Integer> playersScore = new HashMap<>();
 
+    private final String topicQuestion;
     private final String topicTop;
     private final String topicResult;
 
     private final KafkaProducer<String, byte[]> producer;
 
     public LeaderboardProcessor(Properties props) {
+        topicQuestion = props.getProperty("topic.question");
         topicTop = props.getProperty("topic.top");
         topicResult = props.getProperty("topic.result");
 
@@ -93,10 +95,7 @@ public class LeaderboardProcessor {
             JSONObject reset = new JSONObject();
             reset.put("reset", true);
             reset.put("message", "Game ended. A new game will start now. Wait for the questions.");
-            for (String player : playersScore.keySet()) {
-                ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicResult, player, reset.toString().getBytes());
-                producer.send(record);
-            }
+            producer.send(new ProducerRecord<>(topicQuestion, 0,null, reset.toString().getBytes()));
             leaderBoard.clear();
             playersScore.clear();
         });

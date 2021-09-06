@@ -51,38 +51,38 @@ document.addEventListener('DOMContentLoaded', function() {
         if (subject == QUESTIONS_SUBJECT) {
             var questionObject = JSON.parse(message.content);
 
-            showQuestion(questionObject);
+            if (questionObject.reset) {
+                if (videoPlayerReady) {
+                    player.seekTo(0, true);
+                    player.playVideo();
+                }
+                document.querySelector('#show-question').textContent = "";
+                document.querySelector('#show-result').textContent = questionObject.message;
+                var divEl = document.querySelector('#show-answers');
+                divEl.innerHTML = "";            
+            } else {
+                showQuestion(questionObject);
 
-            stopQuestionTimeoutTimer();
-            startQuestionTimeoutTimer();
+                stopQuestionTimeoutTimer();
+                startQuestionTimeoutTimer();    
+            }
         }
 
         // show the result 
         if (subject == RESULTS_SUBJECT) {
             var result = JSON.parse(message.content);
 
-            if (result.reset) {
-                if (videoPlayerReady) {
-                    player.seekTo(0, true);
-                    player.playVideo();
-                }
-                document.querySelector('#show-question').textContent = "";
-                document.querySelector('#show-result').textContent = result.message;
-                var divEl = document.querySelector('#show-answers');
-                divEl.innerHTML = "";            
+            if (parseInt(result.points) > 0) {
+                showInfoAboutResult("You won " + result.points + " points, wait for the next question!");
             } else {
-                if (parseInt(result.points) > 0) {
-                    showInfoAboutResult("You won " + result.points + " points, wait for the next question!");
-                } else {
-                    showInfoAboutResult(INCORRECT_TEXT);
-                }
-                document.querySelectorAll('a[questionId]').forEach(el => {
-                    if (el.textContent == result.answer) {
-                        el.classList.remove("btn-danger");
-                        el.classList.add("btn-success");
-                    }
-                });
+                showInfoAboutResult(INCORRECT_TEXT);
             }
+            document.querySelectorAll('a[questionId]').forEach(el => {
+                if (el.textContent == result.answer) {
+                    el.classList.remove("btn-danger");
+                    el.classList.add("btn-success");
+                }
+            });
         }
 
         // display the top users
