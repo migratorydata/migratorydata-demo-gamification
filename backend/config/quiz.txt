@@ -4,9 +4,10 @@
 #answer2
 #answerx
 #correctAnswer
+#seekTime
 
 # 0:20
-1. How many spectators are there altogether?
+How many spectators are there altogether?
 less than 1000
 between 1000 and 5000
 between 5000 and 10000
@@ -14,7 +15,7 @@ more than 10000
 between 1000 and 5000
 
 # 0:40
-2. What is the number of strokes with which this game will be won?
+What is the number of strokes with which this game will be won?
 less than 10
 between 10 and 20
 between 20 and 30
@@ -22,64 +23,64 @@ more than 30
 more than 30
 
 # 1:00
-3. Who will win this game?
+Who will win this game?
 Simona Halep
 Sloane Stephens
 Sloane Stephens
 
 # 1:20
-4. How will end this game?
+How will end this game?
 Out
 Wrong-footing
 Opponent Falls
 Wrong-footing
 
 # 1:40
-5. How will end this game?
+How will end this game?
 Out
 Wrong-footing
 Opponent Falls
 Out
 
 # 2:00
-6. How many strokes remains in this game?
+How many extra shots are needed to win the point?
 less than 10
 between 10 and 20
 more than 20
 less than 10
 
 # 2:20
-7. Will the next serve be an ace?
+Will the next serve be an ace?
 Yes
 No
 No
 
 # 2:40
-8. How ended last game?
+How ended last game?
 Out
 Wrong-footing
 Wrong-footing
 
 # 3:00
-9. Who will win this game?
+Who will win this game?
 Simona Halep
 Sloane Stephens
 Simona Halep
 
 # 3:20
-10. Will the next serve be an ace?
+Will the next serve be an ace?
 Yes
 No
 No
 
 # 3:40
-11. Who will win this game?
+Who will win this game?
 Simona Halep
 Sloane Stephens
 Simona Halep
 
 # 4:00
-12. Will Sloane Stephens save the match point?
+Will Sloane Stephens save the match point?
 Yes
 No
 No
