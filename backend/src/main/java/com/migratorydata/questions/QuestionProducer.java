@@ -1,13 +1,11 @@
 package com.migratorydata.questions;
 
-import com.migratorydata.leaderboard.LeaderboardProcessor;
 import org.apache.kafka.clients.producer.*;
 import org.json.JSONObject;
 
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,18 +17,16 @@ public class QuestionProducer {
     private final List<Question> questions;
     private final Properties config;
     private final String topicQuestion;
-    private final LeaderboardProcessor leaderboardProcessor;
 
     private final AtomicInteger questionNumber = new AtomicInteger(0);
     private final AtomicInteger seekTimeSeconds = new AtomicInteger(0);
 
     private final KafkaProducer<String, byte[]> producer;
 
-    public QuestionProducer(List<Question> questions, Properties config, LeaderboardProcessor leaderboardProcessor) {
+    public QuestionProducer(List<Question> questions, Properties config) {
         this.questions = questions;
         this.config = config;
         this.topicQuestion = config.getProperty("topic.question");
-        this.leaderboardProcessor = leaderboardProcessor;
 
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
@@ -48,11 +44,15 @@ public class QuestionProducer {
                 if (qNumber + 1 >= questions.size()) {
                     try {
                         Thread.sleep(30000);
-                    } catch (InterruptedException e) { }
+                    } catch (InterruptedException e) {
+                    }
                     questionNumber.getAndSet(0);
                     seekTimeSeconds.getAndSet(0);
-                    if (leaderboardProcessor != null)
-                        leaderboardProcessor.handleReset();
+
+                    JSONObject reset = new JSONObject();
+                    reset.put("points", -1);
+                    reset.put("question", "Game ended. A new game will start now. Wait for the questions.");
+                    producer.send(new ProducerRecord<>(topicQuestion, 0, null, reset.toString().getBytes()));
                 }
             }
         }, Integer.valueOf(config.getProperty("question.interval", "20000")), Integer.valueOf(config.getProperty("question.interval", "20000")), TimeUnit.MILLISECONDS);

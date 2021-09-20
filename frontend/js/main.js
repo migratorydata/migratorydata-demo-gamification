@@ -51,13 +51,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (subject == QUESTIONS_SUBJECT) {
             var questionObject = JSON.parse(message.content);
 
-            if (questionObject.reset) {
+            if (questionObject.points == -1) {
                 if (videoPlayerReady) {
                     player.seekTo(0, true);
                     player.playVideo();
                 }
                 document.querySelector('#show-question').textContent = "";
-                document.querySelector('#show-result').textContent = questionObject.message;
+                document.querySelector('#show-result').textContent = questionObject.question;
                 var divEl = document.querySelector('#show-answers');
                 divEl.innerHTML = "";            
             } else {

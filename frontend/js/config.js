@@ -3,7 +3,7 @@ var USER_ID = getUserId();
 var TOKEN = "some-token";
 
 var SERVERS = [
-    "http://127.0.0.1:8800",
+    "http://192.168.5.190:8800",
 ];
 
 var KAFKA_QUESTION_TOPIC = "question";
