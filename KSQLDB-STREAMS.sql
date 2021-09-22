@@ -1,3 +1,4 @@
+
 CREATE STREAM input_question (ID VARCHAR, question VARCHAR, answers ARRAY<VARCHAR>, answer VARCHAR, points INT)
     WITH (KAFKA_TOPIC='input_question',
           VALUE_FORMAT='JSON',
