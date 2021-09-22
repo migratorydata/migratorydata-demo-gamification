@@ -1,14 +1,1 @@
 Web application for watch and play demo
-
-How to run:
-
-Update configuration in file ./js/config.js
-
-set MigratoryData KE address in `var SERVERS`
-
-Execute in terminal the following commands:
-
-npm install
-npm start
-
-Open browser at address http://localhost:5000
