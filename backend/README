@@ -3,8 +3,8 @@ Quiz, leaderboard and players simulation application for watch and play demo
 How to run:
 update configuration file ./config/config.properties
 
-set MigratoryData KE address in `server` property
-set Kafka address in `bootstrap.servers` property
+set the address of the MigratoryData server in the `server` property
+set the address of Kafka in the `bootstrap.servers` property
 
 execute in terminal command:
 ./gradle run
