@@ -4,7 +4,7 @@ How to run:
 
 Update configuration in file ./js/config.js
 
-set MigratoryData KE address in `var SERVERS`
+set the address of the MigratoryData server in the variable `SERVERS`
 
 Execute in terminal the following commands:
 
