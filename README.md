@@ -1,10 +1,14 @@
-This repository contains a demo application for gamification as detailed in the article [Building a Realtime Gamification Feature that Scales to Millions of Devices using MigratoryData, Kafka, and WebSockets: A look at Watch’NPlay Interactive Game](#). The folder `frontend` contains the source code of the UI. The folder `backend` contains the source code of the Leaderboard Processor, Answers Processor, and Questions Generator.
+This repository contains a demo application for gamification as detailed in the article [Building a Realtime Gamification Feature that Scales to Millions of Devices using MigratoryData, Kafka, and WebSockets: A look at Watch’NPlay Interactive Game](https://migratorydata.com/2021/08/30/gamification-millions-devices/). The folder `frontend` contains the source code of the UI. The folder `backend` contains the source code of the Leaderboard Processor, Answers Processor, and Questions Generator.
 
 How to run:
 
-1. Install MigratoryData Kafka Edition. See the [Installation Guide](https://migratorydata.com/docs/migratorydata-ke/installation/).
+1. Install the MigratoryData server. See the [Installation Guide](https://migratorydata.com/docs/migratorydata/installation/).
 
-2. Configure MigratoryData Kafka Edition by editing the parmeter `topics` of the configuration file `migratorydata-ke/kafka/consumer.properties` as follows:
+2. Enable the Kafka Native Add-on. Edit the main configuration file `migratorydata.conf` of the MigratoryDat server and add the following line:
+
+`ClusterEngine = kafka`
+
+3. Configure the Kafka Native Add-on by editing the parameter `topics` of the configuration file `addons/kafka/consumer.properties` as follows:
    
 `topics=question,result,top,live`
    
