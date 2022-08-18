@@ -3,7 +3,7 @@ var USER_ID = getUserId();
 var TOKEN = "some-token";
 
 var SERVERS = [
-    "https://ke.migratorydata.com",
+    "http://localhost:8800",
 ];
 
 var KAFKA_QUESTION_TOPIC = "question";
