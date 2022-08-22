@@ -6,7 +6,7 @@ How to run:
 
 2. Install Kafka broker
 
-    Make sure that you have Java version 8 installed. Download the platform-independent tarball package of Apache Kafka and unzip it to any folder, change to that folder, and run the following two commands in two different terminals on Linux or MacOS (run the similar commands with the bat extension instead of the sh extension on Windows):
+    Make sure that you have Java version 8 installed. Download the [platform-independent tarball package](https://archive.apache.org/dist/kafka/2.6.0/kafka_2.12-2.6.0.tgz) of Apache Kafka and unzip it to any folder, change to that folder, and run the following two commands in two different terminals on Linux or MacOS (run the similar commands with the bat extension instead of the sh extension on Windows):
 ```bash
     ./bin/zookeeper-server-start.sh config/zookeeper.properties
     ./bin/kafka-server-start.sh config/server.properties
