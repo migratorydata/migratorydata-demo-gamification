@@ -1,4 +1,4 @@
-This repository contains a demo application for gamification as detailed in the article [Building a Realtime Gamification Feature that Scales to Millions of Devices using MigratoryData, Kafka, and WebSockets: A look at Watch’NPlay Interactive Game](https://migratorydata.com/2021/08/30/gamification-millions-devices/). The folder `frontend` contains the source code of the UI. The folder `backend` contains the source code of the Leaderboard Processor, Answers Processor, and Questions Generator.
+This repository contains a demo application for gamification as detailed in the article [Real-time Gaming Infrastructure for Millions of Users with Kafka, KSQL, and WebSockets](#). The folder `frontend` contains the source code of the UI. The folder `backend` contains the source code of the Leaderboard Processor, Answers Processor, and Questions Generator.
 
 How to run:
 
