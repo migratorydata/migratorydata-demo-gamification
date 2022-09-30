@@ -1,4 +1,4 @@
-This repository contains a demo application for gamification as detailed in the blog post[Real-time Gaming Infrastructure for Millions of Users with Kafka, KSQL, and WebSockets](https://www.confluent.io/blog/real-time-gaming-infrastructure-kafka-ksqldb-websockets/). See this demo live at:
+This repository contains a demo application for gamification as detailed in the blog post[Real-time Gaming Infrastructure for Millions of Users with Kafka, KSQL, and WebSockets](https://www.confluent.io/blog/real-time-gaming-infrastructure-kafka-ksqldb-websockets/). To see this demo live, click on the following screenshot:
 
 <a href="https://migratorydata.com/live-demo/realtime-gamification/" target="_blank"><img src="https://migratorydata.com/images/blog/2021/08/migratorydata-live-demo-gamfication.png" width="70%"/></a>
 
