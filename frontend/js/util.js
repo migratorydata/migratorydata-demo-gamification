@@ -111,9 +111,9 @@ function generateRandomId(length) {
 }
 
 // this function gets called when API is ready to use
-function onYouTubeIframeAPIReady() {
-     console.log(".....onYouTubeIframeAPIReady");
-    // create the global player from the specific iframe (#video)
+function onYouTubePlayerAPIReady() {
+     console.log(".....onYouTubePlayerPIReady");
+
     player = new YT.Player('video', {
 	height: '310',
         width: '560',
