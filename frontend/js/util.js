@@ -111,9 +111,19 @@ function generateRandomId(length) {
 }
 
 // this function gets called when API is ready to use
-function onYouTubePlayerAPIReady() {
+function onYouTubeIframeAPIReady() {
+     console.log(".....onYouTubeIframeAPIReady");
     // create the global player from the specific iframe (#video)
     player = new YT.Player('video', {
+	height: '310',
+        width: '560',
+	videoId: 'VBc_XRYzZy4',
+	playerVars: {
+            'playsinline': 1,
+	    'autoplay': 1,
+	    'origin' : 'https://migratorydata.com',
+	    'mute' : 1
+        },
         events: {
             // call this function when player is ready to use
             'onReady': onPlayerReady
@@ -122,9 +132,11 @@ function onYouTubePlayerAPIReady() {
 }
 
 function onPlayerReady(event) {
+    console.log(".....onPlayerReady");
     videoPlayerReady = true;
     if (videoSeekSeconds != -1) {
-        player.seekTo(videoSeekSeconds, true);
-        player.playVideo();
+        event.target.seekTo(videoSeekSeconds, true);
+        event.target.playVideo();
     }
 }
+
