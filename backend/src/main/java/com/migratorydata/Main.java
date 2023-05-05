@@ -13,7 +13,6 @@ import com.migratorydata.leaderboard.LeaderboardProcessor;
 import java.io.*;
 import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
 
 public class Main {
 
@@ -23,15 +22,17 @@ public class Main {
     private static QuestionProducer questionProducer;
 
     public static void main(String[] args) throws IOException {
-        Properties config = loadConfigProperties();
+        if (args.length != 2) {
+            System.err.println("USAGE: java -jar backend.jar ServerAddress token");
+            System.exit(1);
+        }
+
+        Properties config = loadConfigProperties(args[0], args[1]);
         boolean enableLeaderboard = Boolean.valueOf(config.getProperty("enable.leaderboard", "true"));
         boolean enablePlayersSimulator = Boolean.valueOf(config.getProperty("enable.playerssimulator", "true"));
         boolean enableQuestionProducer = Boolean.valueOf(config.getProperty("enable.questionproducer", "true"));
 
         StatisticsProcessor statisticsProcessor = new StatisticsProcessor();
-
-        // Answers processor start
-        config.setProperty("group.id", UUID.randomUUID().toString().substring(0, 10));
 
         int instances = Integer.valueOf(config.getProperty("answers.threads", "1"));
 
@@ -86,23 +87,19 @@ public class Main {
         });
     }
 
-    public static Properties loadConfigProperties() {
-        Properties props = readPropertiesFile("./config/config.properties");
-        if (props == null) {
-            System.err.println("Please configure ./config/config.properties config file");
-            System.exit(99);
-        }
-        return props;
-    }
-
-    public static Properties readPropertiesFile(String fileName) {
+    public static Properties loadConfigProperties(String server, String token) {
         Properties props = new Properties();
-        try (InputStream input = new FileInputStream(fileName)){
-            props.load(input);
-        } catch (IOException e) {
-            return null;
-        }
+        props.put("server", server);
+        props.put("entitlementToken", token);
+        props.put("simulation.clients.number", System.getProperty("simulation.clients.number", "10"));
+        props.put("question.interval", System.getProperty("question.interval", "20000"));
+        props.put("topic.question", System.getProperty("topic.question", "/admin/gamification/question"));
+        props.put("topic.answer", System.getProperty("topic.answer", "/admin/gamification/answer"));
+        props.put("topic.result", System.getProperty("topic.result", "/admin/gamification/result"));
+        props.put("topic.top", System.getProperty("topic.top", "/admin/gamification/top"));
+        props.put("topic.gettop", System.getProperty("topic.gettop", "/admin/gamification/gettop"));
+        props.put("topic.live", System.getProperty("topic.live", "/admin/gamification/live/time"));
+
         return props;
     }
-
 }

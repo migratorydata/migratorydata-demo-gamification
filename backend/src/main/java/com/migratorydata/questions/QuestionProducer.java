@@ -1,13 +1,14 @@
 package com.migratorydata.questions;
 
+import com.migratorydata.client.MigratoryDataClient;
+import com.migratorydata.client.MigratoryDataListener;
+import com.migratorydata.client.MigratoryDataMessage;
 import com.migratorydata.leaderboard.LeaderboardProcessor;
-import org.apache.kafka.clients.producer.*;
 import org.json.JSONObject;
 
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,23 +20,40 @@ public class QuestionProducer {
     private final List<Question> questions;
     private final Properties config;
     private final String topicQuestion;
+    private final String topicLive;
     private final LeaderboardProcessor leaderboardProcessor;
 
     private final AtomicInteger questionNumber = new AtomicInteger(0);
     private final AtomicInteger seekTimeSeconds = new AtomicInteger(0);
 
-    private final KafkaProducer<String, byte[]> producer;
+    private final MigratoryDataClient producer;
 
     public QuestionProducer(List<Question> questions, Properties config, LeaderboardProcessor leaderboardProcessor) {
         this.questions = questions;
         this.config = config;
         this.topicQuestion = config.getProperty("topic.question");
+        this.topicLive = config.getProperty("topic.live");
+
         this.leaderboardProcessor = leaderboardProcessor;
 
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
+        this.producer =  new MigratoryDataClient();
+        producer.setListener(new MigratoryDataListener() {
+            @Override
+            public void onMessage(MigratoryDataMessage migratoryDataMessage) {
+            }
 
-        this.producer =  new KafkaProducer<>(config);
+            @Override
+            public void onStatus(String s, String s1) {
+            }
+        });
+
+        producer.setEntitlementToken(config.getProperty("entitlementToken", "some-token"));
+        producer.setServers(new String[] { config.getProperty("server", "localhost:8800")} );
+        producer.setEncryption(Boolean.valueOf(config.getProperty("encryption", "false")));
+        producer.setReconnectPolicy(MigratoryDataClient.CONSTANT_WINDOW_BACKOFF);
+        producer.setReconnectTimeInterval(5);
+
+        producer.connect();
     }
 
     public void start() {
@@ -62,30 +80,22 @@ public class QuestionProducer {
             public void run() {
                 JSONObject seekTime = new JSONObject();
                 seekTime.put("seek", seekTimeSeconds.getAndIncrement());
-                ProducerRecord<String, byte[]> record = new ProducerRecord<>("live",0, "time", seekTime.toString().getBytes());
+                MigratoryDataMessage message = new MigratoryDataMessage(topicLive, seekTime.toString().getBytes());
 
-                producer.send(record);
+                producer.publish(message);
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     public void stop() {
-        producer.close();
+        producer.disconnect();
         executor.shutdown();
     }
 
     private void sendQuestion(int qNumber) {
         Question question = questions.get(qNumber);
 
-        ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicQuestion,0, null, question.toJson().getBytes());
-
-        producer.send(record, new Callback() {
-            @Override
-            public void onCompletion(RecordMetadata metadata, Exception exception) {
-                if (exception == null) {
-                    System.out.println("Published question: " + question);
-                }
-            }
-        });
+        MigratoryDataMessage record = new MigratoryDataMessage(topicQuestion, question.toJson().getBytes());
+        producer.publish(record);
     }
 }

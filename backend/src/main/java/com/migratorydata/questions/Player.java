@@ -28,9 +28,9 @@ public class Player implements MigratoryDataListener {
         this.executor = executor;
 
         this.playerId = "player-bot-" + index;
-        this.questionSubject = "/" + config.getProperty("topic.question");
-        this.resultSubject = "/" + config.getProperty("topic.result") + "/" + playerId;
-        this.answerSubject = "/" + config.getProperty("topic.answer") + "/" + playerId;
+        this.questionSubject = config.getProperty("topic.question");
+        this.resultSubject = config.getProperty("topic.result") + "/" + playerId;
+        this.answerSubject = config.getProperty("topic.answer") + "/" + playerId;
 
         client = new MigratoryDataClient();
 

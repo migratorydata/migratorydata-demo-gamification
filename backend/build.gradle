@@ -3,9 +3,6 @@ plugins {
     id 'application'
 }
 
-group 'com.migratorydata'
-version '1.0-SNAPSHOT'
-
 repositories {
     mavenCentral()
 }
@@ -15,31 +12,20 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.json/json
     implementation group: 'org.json', name: 'json', version: '20210307'
-
-    implementation files('lib/migratorydata-client-java.jar')
-
-    // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
-    implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '2.6.0'
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+    implementation group: 'com.migratorydata', name: 'client-java-api', version: '6.0.0'
 }
 
-ext {
-    javaMainClass = "com.migratorydata.Main"
+jar {
+    manifest {
+        attributes("Main-Class": "com.migratorydata.Main")
+    }
+
+    // add to the application jar the dependency 'lib/migratorydata-client-java.jar'
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
 }
 
 application {
-    mainClassName = javaMainClass
-}
-
-distributions {
-    main {
-        contents {
-            from('.') {
-                include 'config/**'
-            }
-        }
-    }
+    mainClassName = 'com.migratorydata.Main'
 }

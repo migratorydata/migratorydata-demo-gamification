@@ -1,6 +1,8 @@
 package com.migratorydata.answers;
 
-import org.apache.kafka.clients.producer.*;
+import com.migratorydata.client.MigratoryDataClient;
+import com.migratorydata.client.MigratoryDataListener;
+import com.migratorydata.client.MigratoryDataMessage;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -21,20 +23,38 @@ public class ResultsProducer extends Thread {
     private JSONObject currentQuestion;
     private long currentQuestionTimestamp;
 
-    private final KafkaProducer<String, byte[]> producer;
+    private final MigratoryDataClient producer;
     private final int questionInterval;
     private final String topicResult;
 
-    public ResultsProducer(Properties props, StatisticsProcessor statisticsProcessor) {
-        this.topicResult = props.getProperty("topic.result");
+    public ResultsProducer(Properties config, StatisticsProcessor statisticsProcessor) {
+        this.topicResult = config.getProperty("topic.result");
         this.statisticsProcessor = statisticsProcessor;
 
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
+        questionInterval = Integer.valueOf(config.getProperty("question.interval", "20000"));
 
-        questionInterval = Integer.valueOf(props.getProperty("question.interval", "20000"));
+        producer =  new MigratoryDataClient();
 
-        producer =  new KafkaProducer<>(props);
+        producer.setListener(new MigratoryDataListener() {
+            @Override
+            public void onMessage(MigratoryDataMessage migratoryDataMessage) {
+            }
+
+            @Override
+            public void onStatus(String s, String s1) {
+                if (s.equals(MigratoryDataClient.NOTIFY_PUBLISH_OK)) {
+                    statisticsProcessor.incrementResults();
+                }
+            }
+        });
+
+        producer.setEntitlementToken(config.getProperty("entitlementToken", "some-token"));
+        producer.setServers(new String[] { config.getProperty("server", "localhost:8800")} );
+        producer.setEncryption(Boolean.valueOf(config.getProperty("encryption", "false")));
+        producer.setReconnectPolicy(MigratoryDataClient.CONSTANT_WINDOW_BACKOFF);
+        producer.setReconnectTimeInterval(5);
+
+        producer.connect();
     }
 
     public void run() {
@@ -53,7 +73,7 @@ public class ResultsProducer extends Thread {
     }
 
     public void close() {
-        producer.close();
+        producer.disconnect();
     }
 
     public void updateQuestion(JSONObject question) {
@@ -91,21 +111,9 @@ public class ResultsProducer extends Thread {
                     }
                     result.put("answer", questionAnswer);
 
-                    ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicResult, playerId, result.toString().getBytes());
+                    MigratoryDataMessage record = new MigratoryDataMessage(topicResult, result.toString().getBytes(), "results-producer-closure");
 
-                    record.headers().add("pushVersion", pushVersion);
-                    record.headers().add("retained", retained); // 0 - false, 1 - true
-                    record.headers().add("compression", compression); // 0 - no compression
-                    record.headers().add("qos", qos); // 0 - Standard, 1 - Guaranteed
-
-                    producer.send(record, new Callback() {
-                        @Override
-                        public void onCompletion(RecordMetadata metadata, Exception exception) {
-                            if (exception == null) {
-                                statisticsProcessor.incrementResults();
-                            }
-                        }
-                    });
+                    producer.publish(record);
                 }
             }
         });

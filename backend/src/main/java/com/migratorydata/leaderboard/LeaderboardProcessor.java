@@ -1,6 +1,8 @@
 package com.migratorydata.leaderboard;
 
-import org.apache.kafka.clients.producer.*;
+import com.migratorydata.client.MigratoryDataClient;
+import com.migratorydata.client.MigratoryDataListener;
+import com.migratorydata.client.MigratoryDataMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,21 +21,35 @@ public class LeaderboardProcessor {
     private final String topicTop;
     private final String topicResult;
 
-    private final KafkaProducer<String, byte[]> producer;
+    private final MigratoryDataClient producer;
 
-    public LeaderboardProcessor(Properties props) {
-        topicQuestion = props.getProperty("topic.question");
-        topicTop = props.getProperty("topic.top");
-        topicResult = props.getProperty("topic.result");
+    public LeaderboardProcessor(Properties config) {
+        topicQuestion = config.getProperty("topic.question");
+        topicTop = config.getProperty("topic.top");
+        topicResult = config.getProperty("topic.result");
 
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
+        producer =  new MigratoryDataClient();
+        producer.setListener(new MigratoryDataListener() {
+            @Override
+            public void onMessage(MigratoryDataMessage migratoryDataMessage) {
+            }
 
-        producer =  new KafkaProducer<>(props);
+            @Override
+            public void onStatus(String s, String s1) {
+            }
+        });
+
+        producer.setEntitlementToken(config.getProperty("entitlementToken", "some-token"));
+        producer.setServers(new String[] { config.getProperty("server", "localhost:8800")} );
+        producer.setEncryption(Boolean.valueOf(config.getProperty("encryption", "false")));
+        producer.setReconnectPolicy(MigratoryDataClient.CONSTANT_WINDOW_BACKOFF);
+        producer.setReconnectTimeInterval(5);
+
+        producer.connect();
     }
 
     public void stop() {
-        producer.close();
+        producer.disconnect();
     }
 
     public String encodeResponse(String playerName) {
@@ -85,8 +101,7 @@ public class LeaderboardProcessor {
 
     public void handleTopRequest(String playerId) {
         executor.execute(() -> {
-            ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicTop, playerId, encodeResponse(playerId).getBytes());
-            producer.send(record);
+            producer.publish(new MigratoryDataMessage(topicTop, encodeResponse(playerId).getBytes()));
         });
     }
 
@@ -95,7 +110,7 @@ public class LeaderboardProcessor {
             JSONObject reset = new JSONObject();
             reset.put("reset", true);
             reset.put("message", "Game ended. A new game will start now. Wait for the questions.");
-            producer.send(new ProducerRecord<>(topicQuestion, 0,null, reset.toString().getBytes()));
+            producer.publish(new MigratoryDataMessage(topicQuestion, reset.toString().getBytes()));
             leaderBoard.clear();
             playersScore.clear();
         });
