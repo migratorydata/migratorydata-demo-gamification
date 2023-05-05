@@ -1,7 +1,8 @@
-function sendAnswer(answer, questionId) {
+function sendAnswer(answer, questionId, user_id) {
     var content = JSON.stringify({
         "answer": answer,
-        "question_id": questionId
+        "question_id": questionId,
+        "user_id": user_id
     });
     
     MigratoryDataClient.publish({
@@ -20,10 +21,11 @@ function createAnswerButton(answer, questionId) {
     buttonElement.setAttribute("questionId", questionId);
     buttonElement.textContent = answer;
     buttonElement.addEventListener('click', function() {
-        sendAnswer(this.textContent, this.getAttribute('questionId'));
+        sendAnswer(this.textContent, this.getAttribute('questionId'), USER_ID);
         document.querySelectorAll('a[questionId]').forEach(el => {
             el.classList.add("disabled");
         });
+        this.classList.remove("btn-primary");
         this.classList.add("btn-danger");
     });
 

@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             document.querySelectorAll('a[questionId]').forEach(el => {
                 if (el.textContent == result.answer) {
+                    el.classList.remove("btn-primary");
                     el.classList.remove("btn-danger");
                     el.classList.add("btn-success");
                 }

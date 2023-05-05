@@ -3,6 +3,7 @@ package com.migratorydata.answers;
 import com.migratorydata.client.MigratoryDataClient;
 import com.migratorydata.client.MigratoryDataListener;
 import com.migratorydata.client.MigratoryDataMessage;
+import com.migratorydata.leaderboard.ScoreConsumer;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -27,9 +28,12 @@ public class ResultsProducer extends Thread {
     private final int questionInterval;
     private final String topicResult;
 
-    public ResultsProducer(Properties config, StatisticsProcessor statisticsProcessor) {
+    private final ScoreConsumer scoreConsumer;
+
+    public ResultsProducer(Properties config, StatisticsProcessor statisticsProcessor, ScoreConsumer scoreConsumer) {
         this.topicResult = config.getProperty("topic.result");
         this.statisticsProcessor = statisticsProcessor;
+        this.scoreConsumer = scoreConsumer;
 
         questionInterval = Integer.valueOf(config.getProperty("question.interval", "20000"));
 
@@ -111,9 +115,11 @@ public class ResultsProducer extends Thread {
                     }
                     result.put("answer", questionAnswer);
 
-                    MigratoryDataMessage record = new MigratoryDataMessage(topicResult, result.toString().getBytes(), "results-producer-closure");
+                    MigratoryDataMessage record = new MigratoryDataMessage(topicResult + "/" + playerId, result.toString().getBytes(), "results-producer-closure");
 
                     producer.publish(record);
+
+                    scoreConsumer.onMessage(record);
                 }
             }
         });

@@ -28,7 +28,6 @@ public class Main {
         }
 
         Properties config = loadConfigProperties(args[0], args[1]);
-        boolean enableLeaderboard = Boolean.valueOf(config.getProperty("enable.leaderboard", "true"));
         boolean enablePlayersSimulator = Boolean.valueOf(config.getProperty("enable.playerssimulator", "true"));
         boolean enableQuestionProducer = Boolean.valueOf(config.getProperty("enable.questionproducer", "true"));
 
@@ -39,8 +38,14 @@ public class Main {
         ResultsProducer[] resultsProducers = new ResultsProducer[instances];
         AnswersConsumer[] answersConsumers = new AnswersConsumer[instances];
 
+
+        leaderboardProcessor = new LeaderboardProcessor(config);
+
+        scoreConsumer = new ScoreConsumer(leaderboardProcessor, config);
+        scoreConsumer.start();
+
         for (int i = 0; i < instances; i++) {
-            resultsProducers[i] = new ResultsProducer(config, statisticsProcessor);
+            resultsProducers[i] = new ResultsProducer(config, statisticsProcessor, scoreConsumer);
             resultsProducers[i].start();
 
             answersConsumers[i] = new AnswersConsumer(resultsProducers[i], resultsProducers, config, i, statisticsProcessor);
@@ -55,13 +60,6 @@ public class Main {
 
         List<Question> questions = QuestionLoader.loadQuestion();
 
-        // Leaderboard processor start
-        if (enableLeaderboard) {
-            leaderboardProcessor = new LeaderboardProcessor(config);
-
-            scoreConsumer = new ScoreConsumer(leaderboardProcessor, config);
-            scoreConsumer.start();
-        }
 
         if (enableQuestionProducer) {
             questionProducer = new QuestionProducer(questions, config, leaderboardProcessor);
@@ -72,10 +70,8 @@ public class Main {
             public void run() {
                 if (enablePlayersSimulator) playersSimulator.stop();
                 if (enableQuestionProducer) questionProducer.stop();
-                if (enableLeaderboard) {
-                    scoreConsumer.stop();
-                    leaderboardProcessor.stop();
-                }
+                scoreConsumer.stop();
+                leaderboardProcessor.stop();
 
                 for (AnswersConsumer answersConsumer : answersConsumers) {
                     answersConsumer.stop();

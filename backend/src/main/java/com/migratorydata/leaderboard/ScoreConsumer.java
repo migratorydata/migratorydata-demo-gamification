@@ -44,33 +44,6 @@ public class ScoreConsumer implements MigratoryDataListener {
         consumer.disconnect();
     }
 
-//    @Override
-//    public void run() {
-//        try {
-//            while (!closed.get()) {
-//                ConsumerRecords<String, byte[]> records = consumer.poll(Duration.ofMillis(100));
-//
-//                for (ConsumerRecord<String, byte[]> record : records) {
-////                    System.out.printf("%s-%d-%d, key = %s, value = %s --- %d %n", record.topic(), record.partition(), record.offset(), record.key(), new String(record.value()), record.timestamp());
-//
-//                    JSONObject data = new JSONObject(new String(record.value()));
-//
-//                    if (record.topic().equals(topicGettop)) {
-//                        leaderboardProcessor.handleTopRequest(data.getString("user_id"));
-//                    } else {
-//                        try {
-//                            leaderboardProcessor.updateScore(record.key(), data.getInt("points"));
-//                        } catch (JSONException e) {}
-//                    }
-//                }
-//            }
-//        } catch (WakeupException e) {
-//            // Ignore exception if closing
-//            if (!closed.get()) throw e;
-//        } finally {
-//            consumer.close();
-//        }
-//    }
 
     @Override
     public void onMessage(MigratoryDataMessage migratoryDataMessage) {
@@ -81,7 +54,7 @@ public class ScoreConsumer implements MigratoryDataListener {
                 leaderboardProcessor.handleTopRequest(data.getString("user_id"));
             } else {
                 try {
-                    String playerName = migratoryDataMessage.getSubject().substring(migratoryDataMessage.getSubject().indexOf("/", 1) + 1);
+                    String playerName = data.getString("user_id");
                     leaderboardProcessor.updateScore(playerName, data.getInt("points"));
                 } catch (JSONException e) {
                 }

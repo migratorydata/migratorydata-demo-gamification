@@ -55,7 +55,7 @@ public class AnswersConsumer implements MigratoryDataListener {
                 JSONObject content = new JSONObject(new String(migratoryDataMessage.getContent()));
 
                 if (migratoryDataMessage.getSubject().equals(topicAnswer)) {
-                    String playerId = migratoryDataMessage.getSubject().substring(migratoryDataMessage.getSubject().indexOf("/", 1) + 1);
+                    String playerId = content.getString("user_id");
 
                     answers.add(new Answer(content, playerId));
                 } else {

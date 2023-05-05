@@ -30,7 +30,7 @@ public class Player implements MigratoryDataListener {
         this.playerId = "player-bot-" + index;
         this.questionSubject = config.getProperty("topic.question");
         this.resultSubject = config.getProperty("topic.result") + "/" + playerId;
-        this.answerSubject = config.getProperty("topic.answer") + "/" + playerId;
+        this.answerSubject = config.getProperty("topic.answer");
 
         client = new MigratoryDataClient();
 
@@ -62,6 +62,7 @@ public class Player implements MigratoryDataListener {
             JSONArray answers = (JSONArray) messageJson.get("answers");
             JSONObject responseJSON = new JSONObject();
             responseJSON.put("question_id", questionId);
+            responseJSON.put("user_id", playerId);
             responseJSON.put("answer", String.valueOf(answers.get(random.nextInt(answers.length()))));
 
             executor.schedule(new Runnable() {

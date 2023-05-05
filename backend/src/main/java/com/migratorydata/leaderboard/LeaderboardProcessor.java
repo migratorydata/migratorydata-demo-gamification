@@ -101,7 +101,7 @@ public class LeaderboardProcessor {
 
     public void handleTopRequest(String playerId) {
         executor.execute(() -> {
-            producer.publish(new MigratoryDataMessage(topicTop, encodeResponse(playerId).getBytes()));
+            producer.publish(new MigratoryDataMessage(topicTop + "/" + playerId, encodeResponse(playerId).getBytes()));
         });
     }
 

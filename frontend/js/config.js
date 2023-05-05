@@ -8,7 +8,7 @@ var SERVERS = [
 
 var QUESTIONS_SUBJECT = "/admin/gamification/question";
 var RESULTS_SUBJECT = "/admin/gamification/result/" + USER_ID;
-var ANSWERS_SUBJECT = "/admin/gamification/answer/" + USER_ID;
+var ANSWERS_SUBJECT = "/admin/gamification/answer";
 var TOP_USERS_SUBJECT = "/admin/gamification/top/" + USER_ID;
 var TOP_SERVICE_SUBJECT = "/admin/gamification/gettop"
 var LIVE_VIDEO_TIME_SUBJECT = "/admin/gamification/live/time";
