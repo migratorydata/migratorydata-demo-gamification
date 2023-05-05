@@ -6,18 +6,12 @@ var SERVERS = [
     "http://localhost:8800",
 ];
 
-var KAFKA_QUESTION_TOPIC = "question";
-var KAFKA_ANSWER_TOPIC = "answer";
-var KAFKA_RESULT_TOPIC = "result";
-var KAFKA_TOP_TOPIC = "top";
-var KAFKA_GETTOP_TOPIC = "gettop";
-
-var QUESTIONS_SUBJECT = "/" + KAFKA_QUESTION_TOPIC;
-var RESULTS_SUBJECT = "/" + KAFKA_RESULT_TOPIC + "/" + USER_ID;
-var ANSWERS_SUBJECT = "/" + KAFKA_ANSWER_TOPIC + "/" + USER_ID;
-var TOP_USERS_SUBJECT = "/" + KAFKA_TOP_TOPIC + "/" + USER_ID;
-var TOP_SERVICE_SUBJECT = "/" + KAFKA_GETTOP_TOPIC;
-var LIVE_VIDEO_TIME_SUBJECT = "/live/time";
+var QUESTIONS_SUBJECT = "/admin/gamification/question";
+var RESULTS_SUBJECT = "/admin/gamification/result/" + USER_ID;
+var ANSWERS_SUBJECT = "/admin/gamification/answer/" + USER_ID;
+var TOP_USERS_SUBJECT = "/admin/gamification/top/" + USER_ID;
+var TOP_SERVICE_SUBJECT = "/admin/gamification/gettop"
+var LIVE_VIDEO_TIME_SUBJECT = "/admin/gamification/live/time";
 
 var SUBJECTS = [
     QUESTIONS_SUBJECT,

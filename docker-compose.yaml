@@ -1,0 +1,36 @@
+version: '3'
+services:
+  migratorydata:
+    image: migratorydata/server:latest
+    hostname: migratory
+    container_name: migratorydata
+    restart: always
+    ports:
+      - "8800:8800"
+    networks:
+      - my_network
+    environment:
+      MIGRATORYDATA_JAVA_EXTRA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap'
+
+  gamification-agent:
+    image: backend
+    build: ./backend
+    restart: always
+    networks:
+      - my_network
+    environment:
+      - SERVER=migratory:8800
+      - TOKEN=some-token
+
+  frontend:
+    image: frontend
+    build: ./frontend
+    restart: always
+    networks:
+      - my_network
+    ports:
+      - "3000:3000"
+
+networks:
+  my_network:
+    driver: bridge
