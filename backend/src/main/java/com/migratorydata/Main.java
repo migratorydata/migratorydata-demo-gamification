@@ -22,12 +22,12 @@ public class Main {
     private static QuestionProducer questionProducer;
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 2) {
-            System.err.println("USAGE: java -jar backend.jar ServerAddress token");
+        if (args.length != 3) {
+            System.err.println("USAGE: java -jar backend.jar server_address token subjects_prefix");
             System.exit(1);
         }
 
-        Properties config = loadConfigProperties(args[0], args[1]);
+        Properties config = loadConfigProperties(args[0], args[1], args[2]);
         boolean enablePlayersSimulator = Boolean.valueOf(config.getProperty("enable.playerssimulator", "true"));
         boolean enableQuestionProducer = Boolean.valueOf(config.getProperty("enable.questionproducer", "true"));
 
@@ -83,18 +83,18 @@ public class Main {
         });
     }
 
-    public static Properties loadConfigProperties(String server, String token) {
+    public static Properties loadConfigProperties(String server, String token, String subjectPrefix) {
         Properties props = new Properties();
         props.put("server", server);
         props.put("entitlementToken", token);
         props.put("simulation.clients.number", System.getProperty("simulation.clients.number", "10"));
         props.put("question.interval", System.getProperty("question.interval", "20000"));
-        props.put("topic.question", System.getProperty("topic.question", "/admin/gamification/question"));
-        props.put("topic.answer", System.getProperty("topic.answer", "/admin/gamification/answer"));
-        props.put("topic.result", System.getProperty("topic.result", "/admin/gamification/result"));
-        props.put("topic.top", System.getProperty("topic.top", "/admin/gamification/top"));
-        props.put("topic.gettop", System.getProperty("topic.gettop", "/admin/gamification/gettop"));
-        props.put("topic.live", System.getProperty("topic.live", "/admin/gamification/live/time"));
+        props.put("topic.question", System.getProperty("topic.question", subjectPrefix + "/question"));
+        props.put("topic.answer", System.getProperty("topic.answer", subjectPrefix + "/answer"));
+        props.put("topic.result", System.getProperty("topic.result", subjectPrefix + "/result"));
+        props.put("topic.top", System.getProperty("topic.top", subjectPrefix + "/top"));
+        props.put("topic.gettop", System.getProperty("topic.gettop", subjectPrefix + "/gettop"));
+        props.put("topic.live", System.getProperty("topic.live", subjectPrefix + "/live/time"));
 
         return props;
     }
