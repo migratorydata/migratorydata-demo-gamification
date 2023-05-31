@@ -58,19 +58,25 @@ public class Player implements MigratoryDataListener {
         if (msg.getSubject().equals(questionSubject) && msg.getMessageType() == MigratoryDataMessage.MessageType.UPDATE) {
             JSONObject messageJson = new JSONObject(new String(msg.getContent()));
 
-            String questionId = (String) messageJson.get("id");
-            JSONArray answers = (JSONArray) messageJson.get("answers");
-            JSONObject responseJSON = new JSONObject();
-            responseJSON.put("question_id", questionId);
-            responseJSON.put("user_id", playerId);
-            responseJSON.put("answer", String.valueOf(answers.get(random.nextInt(answers.length()))));
-
-            executor.schedule(new Runnable() {
-                @Override
-                public void run() {
-                    client.publish(new MigratoryDataMessage(answerSubject, responseJSON.toString().getBytes()));
-                }
-            }, random.nextInt(10000), TimeUnit.MILLISECONDS);
+            if (messageJson.has("id") && messageJson.has("answers")) {
+                String questionId = (String) messageJson.get("id");
+                JSONArray answers = (JSONArray) messageJson.get("answers");
+                JSONObject responseJSON = new JSONObject();
+                responseJSON.put("question_id", questionId);
+                responseJSON.put("user_id", playerId);
+                responseJSON.put("answer", String.valueOf(answers.get(random.nextInt(answers.length()))));
+    
+                executor.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            client.publish(new MigratoryDataMessage(answerSubject, responseJSON.toString().getBytes()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, random.nextInt(10000), TimeUnit.MILLISECONDS);    
+            }
         }
     }
 

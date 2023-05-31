@@ -85,34 +85,46 @@ public class LeaderboardProcessor {
 
     public void updateScore(String playerName, int points) {
         executor.execute(() -> {
-            Integer lastScore = playersScore.get(playerName);
-            if (lastScore == null) {
-                playersScore.put(playerName, Integer.valueOf(points));
-                leaderBoard.add(new PlayerScore(playerName, points));
-            } else {
-                if (points > 0) {
-                    playersScore.put(playerName, Integer.valueOf(points + lastScore));
-                    leaderBoard.remove(new PlayerScore(playerName, lastScore));
-                    leaderBoard.add(new PlayerScore(playerName, points + lastScore));
-                }
+            try {
+                Integer lastScore = playersScore.get(playerName);
+                if (lastScore == null) {
+                    playersScore.put(playerName, Integer.valueOf(points));
+                    leaderBoard.add(new PlayerScore(playerName, points));
+                } else {
+                    if (points > 0) {
+                        playersScore.put(playerName, Integer.valueOf(points + lastScore));
+                        leaderBoard.remove(new PlayerScore(playerName, lastScore));
+                        leaderBoard.add(new PlayerScore(playerName, points + lastScore));
+                    }
+                }    
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
 
     public void handleTopRequest(String playerId) {
         executor.execute(() -> {
-            producer.publish(new MigratoryDataMessage(topicTop + "/" + playerId, encodeResponse(playerId).getBytes()));
+            try {
+                producer.publish(new MigratoryDataMessage(topicTop + "/" + playerId, encodeResponse(playerId).getBytes()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
     public void handleReset() {
         executor.execute(() -> {
-            JSONObject reset = new JSONObject();
-            reset.put("reset", true);
-            reset.put("message", "Game ended. A new game will start now. Wait for the questions.");
-            producer.publish(new MigratoryDataMessage(topicQuestion, reset.toString().getBytes()));
-            leaderBoard.clear();
-            playersScore.clear();
+            try {
+                JSONObject reset = new JSONObject();
+                reset.put("reset", true);
+                reset.put("message", "Game ended. A new game will start now. Wait for the questions.");
+                producer.publish(new MigratoryDataMessage(topicQuestion, reset.toString().getBytes()));
+                leaderBoard.clear();
+                playersScore.clear();    
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 }

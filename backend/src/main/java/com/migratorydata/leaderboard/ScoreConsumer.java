@@ -4,7 +4,6 @@ import com.migratorydata.client.MigratoryDataClient;
 import com.migratorydata.client.MigratoryDataListener;
 import com.migratorydata.client.MigratoryDataMessage;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.*;
@@ -48,16 +47,19 @@ public class ScoreConsumer implements MigratoryDataListener {
     @Override
     public void onMessage(MigratoryDataMessage migratoryDataMessage) {
         if (migratoryDataMessage.getMessageType() == MigratoryDataMessage.MessageType.UPDATE) {
-            JSONObject data = new JSONObject(new String(migratoryDataMessage.getContent()));
+            try {
+                JSONObject data = new JSONObject(new String(migratoryDataMessage.getContent()));
 
-            if (migratoryDataMessage.getSubject().equals(topicGetTop)) {
-                leaderboardProcessor.handleTopRequest(data.getString("user_id"));
-            } else {
-                try {
-                    String playerName = data.getString("user_id");
-                    leaderboardProcessor.updateScore(playerName, data.getInt("points"));
-                } catch (JSONException e) {
-                }
+                if (migratoryDataMessage.getSubject().equals(topicGetTop)) {
+                    leaderboardProcessor.handleTopRequest(data.getString("user_id"));
+                } else {
+                    if (data.has("user_id") && data.has("points")) {
+                        String playerName = data.getString("user_id");
+                        leaderboardProcessor.updateScore(playerName, data.getInt("points"));
+                    }
+                }    
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

@@ -52,17 +52,22 @@ public class AnswersConsumer implements MigratoryDataListener {
         if (migratoryDataMessage.getMessageType() == MigratoryDataMessage.MessageType.UPDATE) {
             List<Answer> answers = new ArrayList<>();
 
+            try {
                 JSONObject content = new JSONObject(new String(migratoryDataMessage.getContent()));
 
                 if (migratoryDataMessage.getSubject().equals(topicAnswer)) {
                     String playerId = content.getString("user_id");
-
+    
                     answers.add(new Answer(content, playerId));
                 } else {
                     for (ResultsProducer r : resultsHandlersQuestionUpdate) {
                         r.updateQuestion(content);
                     }
-                }
+                }    
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             if (answers.size() > 0) {
                 resultsProducer.processAnswer(answers);
                 statisticsProcessor.addAnswers(answers.size());

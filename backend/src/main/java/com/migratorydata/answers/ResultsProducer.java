@@ -65,7 +65,11 @@ public class ResultsProducer extends Thread {
         while (true) {
             Runnable r = executor.poll();
             if (r != null) {
-                r.run();
+                try {
+                    r.run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else {
                 try {
                     Thread.sleep(5);
