@@ -2,7 +2,9 @@ package com.migratorydata;
 
 import com.migratorydata.answers.AnswersConsumer;
 import com.migratorydata.answers.ResultsProducer;
-import com.migratorydata.answers.StatisticsProcessor;
+import com.migratorydata.client.MigratoryDataClient;
+import com.migratorydata.client.MigratoryDataListener;
+import com.migratorydata.client.MigratoryDataMessage;
 import com.migratorydata.questions.PlayersSimulator;
 import com.migratorydata.questions.Question;
 import com.migratorydata.questions.QuestionLoader;
@@ -28,57 +30,57 @@ public class Main {
         }
 
         Properties config = loadConfigProperties(args[0], args[1], args[2]);
-        boolean enablePlayersSimulator = Boolean.valueOf(config.getProperty("enable.playerssimulator", "true"));
-        boolean enableQuestionProducer = Boolean.valueOf(config.getProperty("enable.questionproducer", "true"));
 
-        StatisticsProcessor statisticsProcessor = new StatisticsProcessor();
+        MigratoryDataClient producer = new MigratoryDataClient();
 
-        int instances = Integer.valueOf(config.getProperty("answers.threads", "1"));
+        producer.setListener(new MigratoryDataListener() {
+            @Override
+            public void onMessage(MigratoryDataMessage migratoryDataMessage) {
+            }
 
-        ResultsProducer[] resultsProducers = new ResultsProducer[instances];
-        AnswersConsumer[] answersConsumers = new AnswersConsumer[instances];
+            @Override
+            public void onStatus(String s, String s1) {
+                System.out.println("Gamification-" + s + " - " + s1);
+            }
+        });
 
+        producer.setEntitlementToken(config.getProperty("entitlementToken", "some-token"));
+        producer.setServers(new String[] { config.getProperty("server", "localhost:8800")} );
+        producer.setEncryption(Boolean.valueOf(config.getProperty("encryption", "false")));
+        producer.setReconnectPolicy(MigratoryDataClient.CONSTANT_WINDOW_BACKOFF);
+        producer.setReconnectTimeInterval(5);
 
-        leaderboardProcessor = new LeaderboardProcessor(config);
+        producer.connect();
+
+        leaderboardProcessor = new LeaderboardProcessor(config, producer);
 
         scoreConsumer = new ScoreConsumer(leaderboardProcessor, config);
         scoreConsumer.start();
 
-        for (int i = 0; i < instances; i++) {
-            resultsProducers[i] = new ResultsProducer(config, statisticsProcessor, scoreConsumer);
-            resultsProducers[i].start();
-
-            answersConsumers[i] = new AnswersConsumer(resultsProducers[i], resultsProducers, config, i, statisticsProcessor);
-            answersConsumers[i].start();
-        }
+        ResultsProducer resultsProducers = new ResultsProducer(config, scoreConsumer, producer);
+        resultsProducers.start();
+        AnswersConsumer answersConsumers = new AnswersConsumer(resultsProducers, config);
+        answersConsumers.start();
 
         // Questions generator start
-        if (enablePlayersSimulator) {
-            playersSimulator = new PlayersSimulator(config);
-            playersSimulator.start();
-        }
+        playersSimulator = new PlayersSimulator(config);
+        playersSimulator.start();
 
         List<Question> questions = QuestionLoader.loadQuestion();
 
 
-        if (enableQuestionProducer) {
-            questionProducer = new QuestionProducer(questions, config, leaderboardProcessor);
-            questionProducer.start();
-        }
+        questionProducer = new QuestionProducer(questions, config, leaderboardProcessor, producer);
+        questionProducer.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                if (enablePlayersSimulator) playersSimulator.stop();
-                if (enableQuestionProducer) questionProducer.stop();
+                playersSimulator.stop();
+                questionProducer.stop();
                 scoreConsumer.stop();
                 leaderboardProcessor.stop();
 
-                for (AnswersConsumer answersConsumer : answersConsumers) {
-                    answersConsumer.stop();
-                }
-                for (ResultsProducer resultsProducer : resultsProducers) {
-                    resultsProducer.close();
-                }
+                answersConsumers.stop();
+                resultsProducers.close();
             }
         });
     }

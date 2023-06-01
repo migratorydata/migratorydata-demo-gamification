@@ -1,7 +1,6 @@
 package com.migratorydata.leaderboard;
 
 import com.migratorydata.client.MigratoryDataClient;
-import com.migratorydata.client.MigratoryDataListener;
 import com.migratorydata.client.MigratoryDataMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,29 +22,12 @@ public class LeaderboardProcessor {
 
     private final MigratoryDataClient producer;
 
-    public LeaderboardProcessor(Properties config) {
+    public LeaderboardProcessor(Properties config, MigratoryDataClient producer) {
         topicQuestion = config.getProperty("topic.question");
         topicTop = config.getProperty("topic.top");
         topicResult = config.getProperty("topic.result");
 
-        producer =  new MigratoryDataClient();
-        producer.setListener(new MigratoryDataListener() {
-            @Override
-            public void onMessage(MigratoryDataMessage migratoryDataMessage) {
-            }
-
-            @Override
-            public void onStatus(String s, String s1) {
-            }
-        });
-
-        producer.setEntitlementToken(config.getProperty("entitlementToken", "some-token"));
-        producer.setServers(new String[] { config.getProperty("server", "localhost:8800")} );
-        producer.setEncryption(Boolean.valueOf(config.getProperty("encryption", "false")));
-        producer.setReconnectPolicy(MigratoryDataClient.CONSTANT_WINDOW_BACKOFF);
-        producer.setReconnectTimeInterval(5);
-
-        producer.connect();
+        this.producer = producer;
     }
 
     public void stop() {
@@ -106,7 +88,7 @@ public class LeaderboardProcessor {
     public void handleTopRequest(String playerId) {
         executor.execute(() -> {
             try {
-                producer.publish(new MigratoryDataMessage(topicTop + "/" + playerId, encodeResponse(playerId).getBytes()));
+                producer.publish(new MigratoryDataMessage(topicTop + "/" + playerId, encodeResponse(playerId).getBytes(),  "leaderboard-processor-handleTopRequest"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -119,7 +101,7 @@ public class LeaderboardProcessor {
                 JSONObject reset = new JSONObject();
                 reset.put("reset", true);
                 reset.put("message", "Game ended. A new game will start now. Wait for the questions.");
-                producer.publish(new MigratoryDataMessage(topicQuestion, reset.toString().getBytes()));
+                producer.publish(new MigratoryDataMessage(topicQuestion, reset.toString().getBytes(), "leaderboard-processor-handleReset"));
                 leaderBoard.clear();
                 playersScore.clear();    
             } catch (Exception e) {

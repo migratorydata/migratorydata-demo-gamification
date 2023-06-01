@@ -1,7 +1,6 @@
 package com.migratorydata.answers;
 
 import com.migratorydata.client.MigratoryDataClient;
-import com.migratorydata.client.MigratoryDataListener;
 import com.migratorydata.client.MigratoryDataMessage;
 import com.migratorydata.leaderboard.ScoreConsumer;
 import org.json.JSONObject;
@@ -13,13 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ResultsProducer extends Thread {
 
-    private final byte[] pushVersion = "6.0.0".getBytes();
-    private final byte[] retained = new byte[]{(byte) 0};
-    private final byte[] compression = new byte[]{(byte) 0};
-    private final byte[] qos = new byte[]{(byte) 0};
-
     private final Queue<Runnable> executor = new ConcurrentLinkedQueue<>();
-    private final StatisticsProcessor statisticsProcessor;
 
     private JSONObject currentQuestion;
     private long currentQuestionTimestamp;
@@ -30,35 +23,13 @@ public class ResultsProducer extends Thread {
 
     private final ScoreConsumer scoreConsumer;
 
-    public ResultsProducer(Properties config, StatisticsProcessor statisticsProcessor, ScoreConsumer scoreConsumer) {
+    public ResultsProducer(Properties config, ScoreConsumer scoreConsumer, MigratoryDataClient producer) {
         this.topicResult = config.getProperty("topic.result");
-        this.statisticsProcessor = statisticsProcessor;
         this.scoreConsumer = scoreConsumer;
 
         questionInterval = Integer.valueOf(config.getProperty("question.interval", "20000"));
 
-        producer =  new MigratoryDataClient();
-
-        producer.setListener(new MigratoryDataListener() {
-            @Override
-            public void onMessage(MigratoryDataMessage migratoryDataMessage) {
-            }
-
-            @Override
-            public void onStatus(String s, String s1) {
-                if (s.equals(MigratoryDataClient.NOTIFY_PUBLISH_OK)) {
-                    statisticsProcessor.incrementResults();
-                }
-            }
-        });
-
-        producer.setEntitlementToken(config.getProperty("entitlementToken", "some-token"));
-        producer.setServers(new String[] { config.getProperty("server", "localhost:8800")} );
-        producer.setEncryption(Boolean.valueOf(config.getProperty("encryption", "false")));
-        producer.setReconnectPolicy(MigratoryDataClient.CONSTANT_WINDOW_BACKOFF);
-        producer.setReconnectTimeInterval(5);
-
-        producer.connect();
+        this.producer = producer; new MigratoryDataClient();
     }
 
     public void run() {

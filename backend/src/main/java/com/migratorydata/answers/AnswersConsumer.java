@@ -9,19 +9,14 @@ import java.util.*;
 
 public class AnswersConsumer implements MigratoryDataListener {
 
-    private final StatisticsProcessor statisticsProcessor;
-
     private final MigratoryDataClient consumer;
     private final String topicAnswer;
     private final String topicQuestion;
 
     private ResultsProducer resultsProducer;
-    private ResultsProducer[] resultsHandlersQuestionUpdate;
 
-    public AnswersConsumer(ResultsProducer resultsProducer, ResultsProducer[] resultsHandlersQuestionUpdate, Properties config, int index, StatisticsProcessor statisticsProcessor) {
+    public AnswersConsumer(ResultsProducer resultsProducer, Properties config) {
         this.resultsProducer = resultsProducer;
-        this.resultsHandlersQuestionUpdate = resultsHandlersQuestionUpdate;
-        this.statisticsProcessor = statisticsProcessor;
 
         consumer = new MigratoryDataClient();
 
@@ -60,9 +55,7 @@ public class AnswersConsumer implements MigratoryDataListener {
     
                     answers.add(new Answer(content, playerId));
                 } else {
-                    for (ResultsProducer r : resultsHandlersQuestionUpdate) {
-                        r.updateQuestion(content);
-                    }
+                    resultsProducer.updateQuestion(content);
                 }    
             } catch (Exception e) {
                 e.printStackTrace();
@@ -70,7 +63,6 @@ public class AnswersConsumer implements MigratoryDataListener {
 
             if (answers.size() > 0) {
                 resultsProducer.processAnswer(answers);
-                statisticsProcessor.addAnswers(answers.size());
             }
         }
     }

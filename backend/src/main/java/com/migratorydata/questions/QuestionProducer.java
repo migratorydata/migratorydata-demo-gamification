@@ -1,7 +1,6 @@
 package com.migratorydata.questions;
 
 import com.migratorydata.client.MigratoryDataClient;
-import com.migratorydata.client.MigratoryDataListener;
 import com.migratorydata.client.MigratoryDataMessage;
 import com.migratorydata.leaderboard.LeaderboardProcessor;
 import org.json.JSONObject;
@@ -28,7 +27,7 @@ public class QuestionProducer {
 
     private final MigratoryDataClient producer;
 
-    public QuestionProducer(List<Question> questions, Properties config, LeaderboardProcessor leaderboardProcessor) {
+    public QuestionProducer(List<Question> questions, Properties config, LeaderboardProcessor leaderboardProcessor, MigratoryDataClient producer) {
         this.questions = questions;
         this.config = config;
         this.topicQuestion = config.getProperty("topic.question");
@@ -36,24 +35,7 @@ public class QuestionProducer {
 
         this.leaderboardProcessor = leaderboardProcessor;
 
-        this.producer =  new MigratoryDataClient();
-        producer.setListener(new MigratoryDataListener() {
-            @Override
-            public void onMessage(MigratoryDataMessage migratoryDataMessage) {
-            }
-
-            @Override
-            public void onStatus(String s, String s1) {
-            }
-        });
-
-        producer.setEntitlementToken(config.getProperty("entitlementToken", "some-token"));
-        producer.setServers(new String[] { config.getProperty("server", "localhost:8800")} );
-        producer.setEncryption(Boolean.valueOf(config.getProperty("encryption", "false")));
-        producer.setReconnectPolicy(MigratoryDataClient.CONSTANT_WINDOW_BACKOFF);
-        producer.setReconnectTimeInterval(5);
-
-        producer.connect();
+        this.producer = producer;
     }
 
     public void start() {
@@ -95,7 +77,7 @@ public class QuestionProducer {
     private void sendQuestion(int qNumber) {
         Question question = questions.get(qNumber);
 
-        MigratoryDataMessage record = new MigratoryDataMessage(topicQuestion, question.toJson().getBytes());
+        MigratoryDataMessage record = new MigratoryDataMessage(topicQuestion, question.toJson().getBytes(), "question-producer-sendQuestion");
         producer.publish(record);
     }
 }
