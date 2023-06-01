@@ -44,6 +44,7 @@ public class AnswersConsumer implements MigratoryDataListener {
 
     @Override
     public void onMessage(MigratoryDataMessage migratoryDataMessage) {
+        System.out.println("AnswersConsumer - " + migratoryDataMessage);
         if (migratoryDataMessage.getMessageType() == MigratoryDataMessage.MessageType.UPDATE) {
             List<Answer> answers = new ArrayList<>();
 
