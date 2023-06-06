@@ -40,7 +40,7 @@ public class Main {
 
             @Override
             public void onStatus(String s, String s1) {
-                System.out.println("Gamification-" + s + " - " + s1);
+                //System.out.println("Gamification-" + s + " - " + s1);
             }
         });
 
